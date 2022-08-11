@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Guests extends Authenticatable
+class Guest extends Authenticatable
 {
     use HasFactory;
 

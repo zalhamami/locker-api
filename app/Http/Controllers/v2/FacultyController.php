@@ -27,10 +27,21 @@ class FacultyController extends ApiController
 
     /**
      * @param Request $request
+     */
+    private function validateRequest(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string'],
+        ]);
+    }
+
+    /**
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
+        $this->validateRequest($request);
         $resp = $this->repo->create($request->all());
         return $this->singleData($resp);
     }
@@ -52,6 +63,7 @@ class FacultyController extends ApiController
      */
     public function update(Request $request, int $id)
     {
+        $this->validateRequest($request);
         $resp = $this->repo->update($id, $request->all());
         return $this->singleData($resp);
     }

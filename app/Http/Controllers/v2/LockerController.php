@@ -75,6 +75,24 @@ class LockerController extends ApiController
     }
 
     /**
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStatus(Request $request, int $id)
+    {
+        $request->validate([
+            'status' => ['required', 'in:open,close']
+        ]);
+
+        $locker = $this->repo->getById($id);
+        $locker->status = $request['status'];
+        $locker->save();
+
+        return $this->singleData($locker);
+    }
+
+    /**
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */

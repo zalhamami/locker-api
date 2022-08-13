@@ -54,5 +54,6 @@ Route::group(['prefix' => 'locker'], function () {
     Route::get('/{id}', [LockerController::class, 'show']);
     Route::post('/', [LockerController::class, 'store']);
     Route::put('/{id}', [LockerController::class, 'update']);
+    Route::put('/{id}/status', [LockerController::class, 'updateStatus']);
     Route::delete('/{id}', [LockerController::class, 'delete']);
 });

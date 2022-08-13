@@ -8,9 +8,6 @@ class Locker extends General
 {
     use HasFactory;
 
-    const STATUS_OPEN = 'open';
-    const STATUS_CLOSE = 'close';
-
     protected $fillable = [
         'code',
         'name',

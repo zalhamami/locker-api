@@ -4,16 +4,24 @@ namespace App\Http\Controllers\v2;
 
 use App\Http\Controllers\ApiController;
 use App\Repositories\LockerRepository;
+use App\Repositories\LockerTransactionRepository;
 use Illuminate\Http\Request;
 
 class LockerController extends ApiController
 {
     /**
-     * MajorController constructor.
-     * @param LockerRepository $repo
+     * @var LockerTransactionRepository
      */
-    public function __construct(LockerRepository $repo) {
+    private $transactionRepo;
+
+    /**
+     * LockerController constructor.
+     * @param LockerRepository $repo
+     * @param LockerTransactionRepository $transactionRepo
+     */
+    public function __construct(LockerRepository $repo, LockerTransactionRepository $transactionRepo) {
         $this->repo = $repo;
+        $this->transactionRepo = $transactionRepo;
     }
 
     /**
@@ -43,13 +51,57 @@ class LockerController extends ApiController
     {
         $this->validateRequest($request);
 
-        $data = $request->all();
-        $data['code'] =
         $locker = $this->repo->create($request->all());
         $locker->code = md5($locker->id);
         $locker->save();
 
         return $this->singleData($locker);
+    }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeTransaction(Request $request, int $id)
+    {
+        $request->validate([
+            'status' => ['required', 'in:open,close'],
+        ]);
+
+        $locker = $this->repo->getById($id);
+
+        // Add locker transaction
+        $user = session('user');
+        $transaction = $user->locker_transactions()->create([
+            'locker_id' => $locker->id,
+            'status' => $request['status']
+        ]);
+
+        // Save locker status
+        $locker->status = $transaction->status;
+        $locker->save();
+
+        return $this->singleData($transaction);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showTransactions(Request $request)
+    {
+        $request->validate([
+            'locker_id' => ['nullable', 'integer', 'exists:lockers,id']
+        ]);
+
+        if ($request['locker_id']) {
+            $transactions = $this->transactionRepo->getAllByField('locker_id', $request['locker_id']);
+            return $this->collectionData($transactions);
+        }
+
+        $transactions = $this->transactionRepo->getAll();
+        return $this->collectionData($transactions);
     }
 
     /**

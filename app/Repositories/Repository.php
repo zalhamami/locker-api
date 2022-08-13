@@ -41,6 +41,12 @@ abstract class Repository
         return $data;
     }
 
+    public function getAllByField(string $field, $value)
+    {
+        $query = $this->model->where($field, $value);
+        return $this->getAll($query);
+    }
+
     public function getAllWithFilters(array $filters = [], $or = false)
     {
         $query = $this->model;

@@ -15,7 +15,7 @@ class LockerTransaction extends General
         'user_type',
     ];
 
-    protected $with = ['user'];
+    protected $with = ['user', 'locker'];
 
     public function locker()
     {

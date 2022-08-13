@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\v2;
 
 use App\Constants\UserConstant;
+use App\Http\Controllers\ApiController;
 use App\Models\Admin;
 use App\Models\Guest;
 use App\Models\Lecturer;

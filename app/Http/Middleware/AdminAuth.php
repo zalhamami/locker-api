@@ -3,14 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Models\Admin;
-use App\Traits\ApiResponser;
 use Closure;
 use Illuminate\Http\Request;
 
-class AdminAuth
+class AdminAuth extends TokenAuth
 {
-    use ApiResponser;
-
     /**
      * @param Request $request
      * @param Closure $next
@@ -18,14 +15,7 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = Admin::whereHas('access_token', function ($q) use ($request) {
-            $q->where('token', $request->bearerToken());
-        })->first();
-
-        if (!$user) {
-            return $this->errorResponse('Unauthorized', 401);
-        }
-
-        return $next($request);
+        $this->setModel(Admin::class);
+        return parent::handle($request, $next);
     }
 }

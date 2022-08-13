@@ -3,14 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Models\Guest;
-use App\Traits\ApiResponser;
 use Closure;
 use Illuminate\Http\Request;
 
-class GuestAuth
+class GuestAuth extends TokenAuth
 {
-    use ApiResponser;
-
     /**
      * @param Request $request
      * @param Closure $next
@@ -18,14 +15,7 @@ class GuestAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = Guest::whereHas('access_token', function ($q) use ($request) {
-            $q->where('token', $request->bearerToken());
-        })->first();
-
-        if (!$user) {
-            return $this->errorResponse('Unauthorized', 401);
-        }
-
-        return $next($request);
+        $this->setModel(Guest::class);
+        return parent::handle($request, $next);
     }
 }

@@ -44,5 +44,5 @@ Route::group(['prefix' => 'faculty'], function () {
 Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-    Route::get('user', [AuthController::class, 'showUser']);
+    Route::get('user', [AuthController::class, 'showUser'])->middleware('auth.api:guest');
 });

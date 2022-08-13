@@ -8,9 +8,6 @@ class Locker extends General
 {
     use HasFactory;
 
-    const STATUS_OPEN = 'open';
-    const STATUS_CLOSE = 'close';
-
     protected $fillable = [
         'code',
         'name',
@@ -20,6 +17,11 @@ class Locker extends General
 
     public function transactions()
     {
-        return $this->hasMany(LockerTransaction::class)->orderByDesc('id');
+        return $this->hasMany(LockerTransaction::class)->orderByDesc('id')->without('locker');
+    }
+
+    public function scopeDetails($query)
+    {
+        return $query->with(['transactions']);
     }
 }

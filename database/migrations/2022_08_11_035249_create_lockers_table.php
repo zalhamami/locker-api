@@ -15,7 +15,7 @@ class CreateLockersTable extends Migration
     {
         Schema::create('lockers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
+            $table->string('code')->nullable();
             $table->string('name');
             $table->enum('status', ['open', 'close']);
             $table->string('qr_url')->nullable();

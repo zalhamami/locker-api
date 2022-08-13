@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Lecturer extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -19,7 +20,12 @@ class Lecturer extends Authenticatable
 
     protected $hidden = ['password'];
 
-    protected $with = ['major'];
+    protected $with = ['access_token', 'major'];
+
+    public function access_token()
+    {
+        return $this->morphOne(AccessToken::class, 'user');
+    }
 
     public function major()
     {

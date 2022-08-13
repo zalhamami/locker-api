@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\v2\MajorController;
 use App\Http\Controllers\v2\FacultyController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,18 +25,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/APILogin', [ControllerAPI::class, 'APILogin']);
 // Route::post('/presensi', [ControllerAPI::class, 'presensi']);
 
-Route::group('major', function () {
+Route::group(['prefix' => 'major'], function () {
     Route::get('/', [MajorController::class, 'index']);
     Route::get('/{id}', [MajorController::class, 'show']);
-    Route::get('/', [MajorController::class, 'store']);
+    Route::post('/', [MajorController::class, 'store']);
     Route::put('/{id}', [MajorController::class, 'update']);
     Route::delete('/{id}', [MajorController::class, 'delete']);
 });
 
-Route::group('faculty', function () {
-    Route::get('/', [FacultyController::class, 'index']);
+Route::group(['prefix' => 'faculty'], function () {
+    Route::get('/', [FacultyController::class, 'index'])->middleware(['auth.guest']);
     Route::get('/{id}', [FacultyController::class, 'show']);
-    Route::get('/', [FacultyController::class, 'store']);
+    Route::post('/', [FacultyController::class, 'store']);
     Route::put('/{id}', [FacultyController::class, 'update']);
     Route::delete('/{id}', [FacultyController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::get('user', [AuthController::class, 'showUser']);
 });

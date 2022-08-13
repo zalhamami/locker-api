@@ -51,7 +51,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['prefix' => 'locker'], function () {
     Route::get('/', [LockerController::class, 'index']);
-    Route::get('/{id}', [LockerController::class, 'show']);
+    Route::get('/{code}', [LockerController::class, 'show']);
     Route::post('/', [LockerController::class, 'store']);
     Route::post('/transaction', [LockerController::class, 'showTransactions']);
     Route::post('/{id}/transaction', [LockerController::class, 'storeTransaction'])->middleware('auth.api');

@@ -110,12 +110,12 @@ class LockerController extends ApiController
     }
 
     /**
-     * @param int $id
+     * @param string $code
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(int $id)
+    public function show(string $code)
     {
-        $resp = $this->repo->getById($id);
+        $resp = $this->repo->getByField('code', $code);
         return $this->singleData($resp);
     }
 

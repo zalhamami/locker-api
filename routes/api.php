@@ -53,6 +53,7 @@ Route::group(['prefix' => 'locker'], function () {
     Route::get('/', [LockerController::class, 'index']);
     Route::get('/{id}', [LockerController::class, 'show']);
     Route::post('/', [LockerController::class, 'store']);
+    Route::post('/transaction', [LockerController::class, 'showTransactions']);
     Route::post('/{id}/transaction', [LockerController::class, 'storeTransaction'])->middleware('auth.api');
     Route::put('/{id}', [LockerController::class, 'update']);
     Route::put('/{id}/status', [LockerController::class, 'updateStatus']);

@@ -10,17 +10,19 @@ use Illuminate\Http\Request;
 class LockerController extends ApiController
 {
     /**
-     * LockerController constructor.
-     * @param LockerRepository $repo
-     */
-    public function __construct(LockerRepository $repo) {
-        $this->repo = $repo;
-    }
-
-    /**
      * @var LockerTransactionRepository
      */
     private $transactionRepo;
+
+    /**
+     * LockerController constructor.
+     * @param LockerRepository $repo
+     * @param LockerTransactionRepository $transactionRepo
+     */
+    public function __construct(LockerRepository $repo, LockerTransactionRepository $transactionRepo) {
+        $this->repo = $repo;
+        $this->transactionRepo = $transactionRepo;
+    }
 
     /**
      * @return \Illuminate\Http\JsonResponse
@@ -81,6 +83,25 @@ class LockerController extends ApiController
         $locker->save();
 
         return $this->singleData($transaction);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showTransactions(Request $request)
+    {
+        $request->validate([
+            'locker_id' => ['nullable', 'integer', 'exists:lockers,id']
+        ]);
+
+        if ($request['locker_id']) {
+            $transactions = $this->transactionRepo->getAllByField('locker_id', $request['locker_id']);
+            return $this->collectionData($transactions);
+        }
+
+        $transactions = $this->transactionRepo->getAll();
+        return $this->collectionData($transactions);
     }
 
     /**

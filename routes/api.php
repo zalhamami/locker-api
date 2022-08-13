@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\v2\MajorController;
 use App\Http\Controllers\v2\FacultyController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\v2\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,5 +44,5 @@ Route::group(['prefix' => 'faculty'], function () {
 Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-    Route::get('user', [AuthController::class, 'showUser']);
+    Route::get('user', [AuthController::class, 'showUser'])->middleware('auth.api:guest');
 });

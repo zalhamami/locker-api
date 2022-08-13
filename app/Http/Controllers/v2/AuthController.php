@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\v2;
 
 use App\Constants\UserConstant;
-use App\Models\Admin;
-use App\Models\Guest;
-use App\Models\Lecturer;
-use App\Models\Student;
+use App\Helpers\Model;
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -40,7 +38,7 @@ class AuthController extends ApiController
         $data['password'] = bcrypt($data['password']);
 
         // Create user based on type
-        $model = $this->getUserModel($request['type']);
+        $model = Model::getUserModel($request['type']);
         $user = $model::create($data);
 
         // Create access token
@@ -60,26 +58,6 @@ class AuthController extends ApiController
         $user->refresh();
 
         return $user;
-    }
-
-    /**
-     * @param string $type
-     * @return string|null
-     */
-    public function getUserModel(string $type)
-    {
-        switch ($type) {
-            case UserConstant::USER_GUEST:
-                return Guest::class;
-            case UserConstant::USER_ADMIN:
-                return Admin::class;
-            case UserConstant::USER_LECTURER:
-                return Lecturer::class;
-            case UserConstant::USER_STUDENT:
-                return Student::class;
-            default:
-                return null;
-        }
     }
 
     /**
@@ -127,20 +105,11 @@ class AuthController extends ApiController
         ]);
     }
 
-    public function showUser(Request $request)
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showUser()
     {
-        $this->validateUserType($request);
-
-        $token = $request->bearerToken();
-        if (!$token) {
-            return $this->errorResponse('Unauthorized', 401);
-        }
-
-        $model = $this->getUserModel($request['type']);
-        $user = $model::whereHas('access_token', function ($q) use ($token) {
-           $q->where('token', $token);
-        })->first();
-
-        return $this->singleData($user);
+        return $this->singleData(session('user'));
     }
 }

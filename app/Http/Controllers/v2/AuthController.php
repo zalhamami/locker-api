@@ -5,6 +5,8 @@ namespace App\Http\Controllers\v2;
 use App\Constants\UserConstant;
 use App\Helpers\Model;
 use App\Http\Controllers\ApiController;
+use App\Models\LoginHistory;
+use App\Repositories\LoginHistoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -100,6 +102,14 @@ class AuthController extends ApiController
             $user = $this->createAccessToken($user);
         }
 
+        // Add login history
+        $user->login_histories()->create([
+            'device_info' => json_encode([
+                'user_agent' => $request->header('User-Agent'),
+                'ip_address' => $request->ip(),
+            ])
+        ]);
+
         return $this->singleData([
             'access_token' => $user->access_token->token,
         ]);
@@ -111,5 +121,14 @@ class AuthController extends ApiController
     public function showUser()
     {
         return $this->singleData(session('user'));
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showLoginHistories()
+    {
+        $repo = new LoginHistoryRepository(new LoginHistory());
+        return $this->collectionData($repo->getAll());
     }
 }

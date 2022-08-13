@@ -34,7 +34,7 @@ Route::group(['prefix' => 'major'], function () {
 });
 
 Route::group(['prefix' => 'faculty'], function () {
-    Route::get('/', [FacultyController::class, 'index'])->middleware(['auth.guest']);
+    Route::get('/', [FacultyController::class, 'index']);
     Route::get('/{id}', [FacultyController::class, 'show']);
     Route::post('/', [FacultyController::class, 'store']);
     Route::put('/{id}', [FacultyController::class, 'update']);
@@ -45,4 +45,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::get('user', [AuthController::class, 'showUser'])->middleware('auth.api:guest');
+    Route::get('login-history', [AuthController::class, 'showLoginHistories']);
 });

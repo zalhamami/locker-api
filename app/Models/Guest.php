@@ -25,4 +25,9 @@ class Guest extends Authenticatable
     {
         return $this->morphOne(AccessToken::class, 'user');
     }
+
+    public function login_histories()
+    {
+        return $this->morphMany(LoginHistory::class, 'user');
+    }
 }

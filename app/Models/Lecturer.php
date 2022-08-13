@@ -31,4 +31,9 @@ class Lecturer extends Authenticatable
     {
         return $this->belongsTo(Major::class);
     }
+
+    public function login_histories()
+    {
+        return $this->morphMany(LoginHistory::class, 'user');
+    }
 }

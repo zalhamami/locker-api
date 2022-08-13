@@ -19,4 +19,9 @@ class LoginHistory extends General
     public function user() {
         return $this->morphTo();
     }
+
+    public function getDeviceInfoAttribute($val)
+    {
+        return json_decode($val);
+    }
 }

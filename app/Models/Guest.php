@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Guest extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -17,4 +18,11 @@ class Guest extends Authenticatable
     ];
 
     protected $hidden = ['password'];
+
+    protected $with = ['access_token'];
+
+    public function access_token()
+    {
+        return $this->morphOne(AccessToken::class, 'user');
+    }
 }

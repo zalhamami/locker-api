@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\v2;
 
 use App\Http\Controllers\ApiController;
+use App\Models\Locker;
 use App\Repositories\LockerRepository;
 use App\Repositories\LockerTransactionRepository;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 
 class LockerController extends ApiController
@@ -54,6 +56,9 @@ class LockerController extends ApiController
         $locker = $this->repo->create($request->all());
         $locker->code = md5($locker->id);
         $locker->save();
+
+        // Generate qr code
+        $this->generateQrCode($locker);
 
         return $this->singleData($locker);
     }
@@ -122,8 +127,14 @@ class LockerController extends ApiController
     public function update(Request $request, int $id)
     {
         $this->validateRequest($request);
-        $resp = $this->repo->update($id, $request->all());
-        return $this->singleData($resp);
+        $locker = $this->repo->update($id, $request->all());
+
+        // Generate qr code if doesn't exists
+        if (!$locker->qr_url) {
+            $this->generateQrCode($locker);
+        }
+
+        return $this->singleData($locker);
     }
 
     /**
@@ -152,5 +163,22 @@ class LockerController extends ApiController
     {
         $resp = $this->repo->delete($id);
         return $this->deleteMessage($resp);
+    }
+
+    /**
+     * @param Locker $locker
+     */
+    private function generateQrCode(Locker $locker)
+    {
+        $uploadPath = 'lockers/';
+        $qrData = ['code' => $locker->code];
+
+        $service = new QrCodeService();
+        $qrCode = $service->generate(json_encode($qrData))->upload($uploadPath);
+
+        if ($qrCode) {
+            $locker->qr_url = $qrCode['url'];
+            $locker->save();
+        }
     }
 }

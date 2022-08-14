@@ -37,6 +37,7 @@ Route::group(['prefix' => 'major'], function () {
 Route::group(['prefix' => 'faculty'], function () {
     Route::get('/', [FacultyController::class, 'index']);
     Route::get('/{id}', [FacultyController::class, 'show']);
+    Route::get('/{id}/major', [FacultyController::class, 'showMajors']);
     Route::post('/', [FacultyController::class, 'store']);
     Route::put('/{id}', [FacultyController::class, 'update']);
     Route::delete('/{id}', [FacultyController::class, 'delete']);

@@ -57,6 +57,17 @@ class FacultyController extends ApiController
     }
 
     /**
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showMajors(int $id)
+    {
+        $faculty = $this->repo->getById($id);
+        $data = $this->repo->getAll($faculty->majors());
+        return $this->collectionData($data);
+    }
+
+    /**
      * @param Request $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
